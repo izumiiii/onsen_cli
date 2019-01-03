@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require "onsen_cli"
+OnsenCli::CLI.start 

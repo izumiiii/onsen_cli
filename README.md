@@ -22,7 +22,7 @@ Or install it yourself as:
 
 Display commands:
 
-    `$ onsen_cli help`
+    $ onsen_cli help
     
 ## Development
 

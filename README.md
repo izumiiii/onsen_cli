@@ -1,6 +1,6 @@
 # OnsenCli
 
-Internet radio site Onsen Command Line Tools.
+インターネットラジオ音泉の番組一覧と番組情報をコマンドラインから閲覧できるコマンドラインツールです。
 
 ## Installation
 
@@ -23,7 +23,7 @@ Or install it yourself as:
 Display commands:
 
     $ onsen_cli help
-    
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

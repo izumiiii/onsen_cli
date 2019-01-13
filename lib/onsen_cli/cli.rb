@@ -16,7 +16,6 @@ module OnsenCli
     desc "titles [DAY]", "Get the radio titles. Please specify an argument. Japanese: 月、火、水.. English: mon, tue, wed.. no arguenmet: get today radio titles."
     def titles(day = "")
       day_en = get_day(day)
-      # sleep(1)
       doc = Nokogiri::HTML(open('http://www.onsen.ag/'))
       doc.css('.listWrap .clr li').each do |title|
         if title.attr('data-week') == day_en
@@ -28,10 +27,7 @@ module OnsenCli
     desc "search [KEYWORD]", "Search radio titles."
     def search(word)
       escaped_address = URI.escape('http://www.onsen.ag/data/api/searchMovie?word=' + word)
-      uri = URI.parse(escaped_address)
-      json = Net::HTTP.get(uri)
-      json.gsub!(/^*callback\(|\);$/, '')
-      search_result = JSON.parse(json, {:symbolize_names => true})
+      search_result = parse_url(escaped_address)
       titles = search_result(search_result[:result])
       titles.each { |key, title| puts "#{key} #{title.bold}" }
     end
@@ -59,13 +55,16 @@ module OnsenCli
 
 
     private
+      def parse_url(url)
+        uri = URI.parse(url)
+        json = Net::HTTP.get(uri)
+        json.gsub!(/^*callback\(|\);$/, '')
+        JSON.parse(json, {:symbolize_names => true})
+      end
 
       def get_radio_info(key)
         escaped_address = URI.escape('http://www.onsen.ag/data/api/getMovieInfo/' + key)
-        uri = URI.parse(escaped_address)
-        json = Net::HTTP.get(uri)
-        json.gsub!(/^2*callback\(|\);$/, '')
-        return result = JSON.parse(json, {:symbolize_names => true})
+        parse_url(escaped_address)
       end
 
       def search_result(results)
@@ -76,36 +75,35 @@ module OnsenCli
             hash.store(movie_info[:url],movie_info[:title])
           end
         end
-        return hash
+        hash
       end
 
       def get_day(day)
         case day
           when "月", "mon"
-            day_en = "mon"
+          "mon"
           when "火", "tue"
-            day_en = "tue"
+            "tue"
           when "水", "wed"
-            day_en = "wed"
+            "wed"
           when "木", "thu"
-            day_en = "thu"
+            "thu"
           when  "金", "fri"
-            day_en = "fri"
+            "fri"
           when "土", "sat"
-            day_en = "sat"
+            "sat"
           when "日", "sun"
-            day_en = "sat"
+            "sat"
           when "", "今日", "today"
             d = Date.today
             if d.strftime("%a").downcase! == "sun"
-              day_en = "sat"
+              "sat"
             else
-              day_en =  d.strftime("%a").downcase!
+              d.strftime("%a").downcase!
             end
           else
             raise "日付を指定してください。 指定については[onsen_cli help]で確認することができます。".colorize(:white).colorize(:background => :red).bold
         end
-        return day_en
       end
   end
 end

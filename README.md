@@ -52,9 +52,7 @@ Search　キーワードからのラジオタイトル検索:
 Topics　トピックスの取得:
 
     $ onsen_cli topics
-    
-![oct](https://user-images.githubusercontent.com/41711526/51089521-08287f00-17b2-11e9-8656-8adbe4a976c1.gif)
-    
+        
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

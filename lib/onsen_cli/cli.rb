@@ -25,6 +25,17 @@ module OnsenCli
       end
     end
 
+    desc "search [KEYWORD]", "Search radio titles."
+    def search(word)
+      escaped_address = URI.escape('http://www.onsen.ag/data/api/searchMovie?word=' + word)
+      uri = URI.parse(escaped_address)
+      json = Net::HTTP.get(uri)
+      json.gsub!(/^*callback\(|\);$/, '')
+      search_result = JSON.parse(json, {:symbolize_names => true})
+      titles = search_result(search_result[:result])
+      titles.each { |key, title| puts "#{key} #{title.bold}" }
+    end
+
     desc "topics", "Get Onsen topics."
     def topics
       doc = Nokogiri::HTML(open('http://www.onsen.ag/blog/?feed=rss2'))
@@ -55,6 +66,17 @@ module OnsenCli
         json = Net::HTTP.get(uri)
         json.gsub!(/^2*callback\(|\);$/, '')
         return result = JSON.parse(json, {:symbolize_names => true})
+      end
+
+      def search_result(results)
+        hash = {}
+        results.each do |result|
+          movie_info = get_radio_info(result)
+          unless movie_info.has_key?(:error)
+            hash.store(movie_info[:url],movie_info[:title])
+          end
+        end
+        return hash
       end
 
       def get_day(day)
